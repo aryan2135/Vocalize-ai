@@ -126,10 +126,20 @@ function AgentsList({ setActiveTab }) {
     window.speechSynthesis.speak(utterance);
   };
 
+  const [notification, setNotification] = useState(null); // { message: string, type: "error" | "success" | "info" }
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null); // ID of agent to delete
+
+  const showNotification = (message, type = "info") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 4000);
+  };
+
   const handleCreateAgent = async (e) => {
     e.preventDefault();
     if (!name || !instructions || !welcomeMessage) {
-      alert("Please fill in all fields.");
+      showNotification("Please fill in all fields.", "error");
       return;
     }
 
@@ -154,19 +164,23 @@ function AgentsList({ setActiveTab }) {
       setPitch(1.0);
       setRate(1.0);
       setModalOpen(false);
+      showNotification("Agent created successfully!", "success");
     } catch (err) {
       console.error(err);
-      alert("Failed to create agent");
+      showNotification("Failed to create agent", "error");
     }
   };
 
-  const handleDeleteAgent = async (id) => {
-    if (!confirm("Are you sure you want to delete this agent?")) return;
+  const confirmDeleteAgent = async () => {
+    if (!deleteConfirmId) return;
     try {
-      await deleteAgentMutation({ agentId: id, userId: email });
+      await deleteAgentMutation({ agentId: deleteConfirmId, userId: email });
+      showNotification("Agent deleted successfully", "success");
     } catch (err) {
       console.error(err);
-      alert("Failed to delete agent");
+      showNotification("Failed to delete agent", "error");
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -226,7 +240,7 @@ function AgentsList({ setActiveTab }) {
                     </div>
                   </div>
                   <button
-                    onClick={() => handleDeleteAgent(agent._id)}
+                    onClick={() => setDeleteConfirmId(agent._id)}
                     className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
                     title="Delete Agent"
                   >
@@ -470,6 +484,42 @@ function AgentsList({ setActiveTab }) {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4">
+          <div className="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-xl p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-white mb-2">Delete Voice Agent?</h3>
+            <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
+              Are you sure you want to delete this agent? This action cannot be undone, and any dashboard links to this agent will be removed.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 border border-zinc-850 hover:border-zinc-700 text-zinc-450 hover:text-zinc-200 font-semibold rounded-lg text-xs transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteAgent}
+                className="px-4 py-2 bg-rose-500 hover:bg-rose-450 text-zinc-950 font-bold rounded-lg text-xs transition-all cursor-pointer"
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Toast Alert */}
+      {notification && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border border-zinc-800 bg-zinc-900/90 backdrop-blur-md shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className={`w-2 h-2 rounded-full ${notification.type === "error" ? "bg-rose-500 shadow-lg shadow-rose-500/50" : "bg-teal-500 shadow-lg shadow-teal-500/50"}`} />
+          <span className="text-xs font-semibold text-zinc-200">{notification.message}</span>
         </div>
       )}
     </div>

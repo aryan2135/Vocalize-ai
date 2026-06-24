@@ -32,6 +32,14 @@ function VoicePlayground() {
   // Active state configs
   const [selectedAgentId, setSelectedAgentId] = useState("");
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [notification, setNotification] = useState(null); // { message: string, type: "error" | "success" | "info" }
+
+  const showNotification = (message, type = "info") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 4000);
+  };
   
   // Call status
   const [callState, setCallState] = useState("disconnected"); // disconnected | connecting | listening | thinking | speaking
@@ -259,11 +267,11 @@ function VoicePlayground() {
   // Start Call
   const handleStartCall = async () => {
     if (!selectedAgent) {
-      alert("Please select or create an agent first!");
+      showNotification("Please select or create an agent first!", "error");
       return;
     }
     if (dbUser?.credits <= 0) {
-      alert("You are out of credits! Please claim free credits in the Billing tab.");
+      showNotification("You are out of credits! Please claim free credits in the Billing tab.", "error");
       return;
     }
 
@@ -821,6 +829,13 @@ function VoicePlayground() {
           </div>
         </div>
       </div>
+      {/* Custom Toast Alert */}
+      {notification && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border border-zinc-800 bg-zinc-900/90 backdrop-blur-md shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className={`w-2 h-2 rounded-full ${notification.type === "error" ? "bg-rose-500 shadow-lg shadow-rose-500/50" : "bg-teal-500 shadow-lg shadow-teal-500/50"}`} />
+          <span className="text-xs font-semibold text-zinc-200">{notification.message}</span>
+        </div>
+      )}
     </div>
   );
 }
