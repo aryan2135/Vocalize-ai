@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@stackframe/stack";
@@ -27,6 +28,11 @@ function CallLogs() {
   // Search filter
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCall, setSelectedCall] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Format call duration (seconds to MM:SS or seconds)
   const formatDuration = (sec) => {
@@ -174,7 +180,7 @@ function CallLogs() {
       )}
 
       {/* Slide-out Drawer Panel */}
-      {selectedCall && (
+      {selectedCall && mounted && createPortal(
         <div className="fixed inset-0 z-50 flex justify-end bg-zinc-950/75 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="w-full max-w-xl bg-zinc-900 border-l border-zinc-800 h-full shadow-2xl p-6 flex flex-col justify-between animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
@@ -256,7 +262,8 @@ function CallLogs() {
               </p>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

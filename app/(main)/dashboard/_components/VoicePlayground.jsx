@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -33,6 +34,11 @@ function VoicePlayground() {
   const [selectedAgentId, setSelectedAgentId] = useState("");
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [notification, setNotification] = useState(null); // { message: string, type: "error" | "success" | "info" }
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const showNotification = (message, type = "info") => {
     setNotification({ message, type });
@@ -102,6 +108,51 @@ function VoicePlayground() {
         setBrowserSupport({ speechRec: false });
       }
     }
+  }, []);
+
+  // Component unmount cleanup to release microphone, speech recognition, and speech synthesis
+  useEffect(() => {
+    return () => {
+      // Clear speech recognition callbacks first to prevent state updates on unmounted component
+      if (recognitionRef.current) {
+        recognitionRef.current.onstart = null;
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.onend = null;
+        recognitionRef.current.onerror = null;
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+        recognitionRef.current = null;
+      }
+      
+      // Stop all mic tracks
+      if (micStreamRef.current) {
+        try {
+          micStreamRef.current.getTracks().forEach(track => track.stop());
+        } catch (e) {}
+        micStreamRef.current = null;
+      }
+
+      // Close audio context
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.close();
+        } catch (e) {}
+        audioContextRef.current = null;
+      }
+
+      // Stop speech synthesis
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch (e) {}
+      }
+
+      // Clear any call timers
+      if (callTimerRef.current) {
+        clearInterval(callTimerRef.current);
+      }
+    };
   }, []);
 
   // Visual Waveform rendering
@@ -830,11 +881,12 @@ function VoicePlayground() {
         </div>
       </div>
       {/* Custom Toast Alert */}
-      {notification && (
+      {notification && mounted && createPortal(
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border border-zinc-800 bg-zinc-900/90 backdrop-blur-md shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
           <div className={`w-2 h-2 rounded-full ${notification.type === "error" ? "bg-rose-500 shadow-lg shadow-rose-500/50" : "bg-teal-500 shadow-lg shadow-teal-500/50"}`} />
           <span className="text-xs font-semibold text-zinc-200">{notification.message}</span>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

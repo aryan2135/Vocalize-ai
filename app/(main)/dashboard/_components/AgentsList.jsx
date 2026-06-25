@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@stackframe/stack";
@@ -72,6 +73,11 @@ function AgentsList({ setActiveTab }) {
   const [rate, setRate] = useState(1.0);
 
   const [testSpeaking, setTestSpeaking] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Apply template values to form fields
   const applyTemplate = (tpl) => {
@@ -286,7 +292,7 @@ function AgentsList({ setActiveTab }) {
       )}
 
       {/* Creation Modal overlay */}
-      {modalOpen && (
+      {modalOpen && mounted && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="bg-zinc-900 border border-zinc-800 w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
             {/* Header */}
@@ -484,11 +490,12 @@ function AgentsList({ setActiveTab }) {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Delete Confirmation Modal */}
-      {deleteConfirmId && (
+      {deleteConfirmId && mounted && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4">
           <div className="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-xl p-6 shadow-2xl animate-in zoom-in-95 duration-200">
             <h3 className="text-lg font-bold text-white mb-2">Delete Voice Agent?</h3>
@@ -512,7 +519,8 @@ function AgentsList({ setActiveTab }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Custom Toast Alert */}

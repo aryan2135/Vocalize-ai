@@ -87,5 +87,3 @@ Configure the following in Vercel settings (based on [.env.production.example](f
 
 ---
 
-## 🗺️ Roadmap
-Details regarding future security metrics, predictive degradation banners, and telemetry containers can be reviewed inside [project_status_and_roadmap.md](file:///e:/My%20folder/New%20folder/ai_voice_agent/project_status_and_roadmap.md).

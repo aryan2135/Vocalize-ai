@@ -2,9 +2,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StackHandler } from "@stackframe/stack";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowLeft, Sparkles, Activity, ShieldCheck, Terminal, Cpu, Zap } from "lucide-react";
 
 export default function Handler() {
+  const pathname = usePathname();
+  const isSettings = pathname?.includes("account-settings");
   const leftCanvasRef = useRef(null);
   const animationRef = useRef(null);
   const [simulatedLogs, setSimulatedLogs] = useState([
@@ -91,96 +94,98 @@ export default function Handler() {
     <div className="min-h-screen bg-zinc-950 text-white relative flex overflow-hidden">
       
       {/* LEFT PANEL: Interactive Visual Brand Space (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-[45%] bg-zinc-950 border-r border-zinc-900 relative flex-col justify-between p-12 overflow-hidden select-none">
-        
-        {/* Cyber Grid pattern inside left panel */}
-        <div className="absolute inset-0 bg-[radial-gradient(#27272a_1.2px,transparent_1.2px)] [background-size:20px_20px] opacity-35" />
-        
-        {/* Gradient glows */}
-        <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[60%] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[60%] rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />
+      {!isSettings && (
+        <div className="hidden lg:flex lg:w-[45%] bg-zinc-950 border-r border-zinc-900 relative flex-col justify-between p-12 overflow-hidden select-none">
+          
+          {/* Cyber Grid pattern inside left panel */}
+          <div className="absolute inset-0 bg-[radial-gradient(#27272a_1.2px,transparent_1.2px)] [background-size:20px_20px] opacity-35" />
+          
+          {/* Gradient glows */}
+          <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[60%] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[60%] rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />
 
-        {/* Brand Header */}
-        <div className="relative z-10 flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-teal-500/20">
-            <Sparkles className="w-4 h-4 text-zinc-950 font-bold" />
-          </div>
-          <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            Vocalize<span className="text-teal-400">AI</span>
-          </span>
-        </div>
-
-        {/* Middle Visuals: Dynamic Audio Line & Features */}
-        <div className="relative z-10 space-y-12 my-auto">
-          <div className="space-y-4">
-            <span className="text-[10px] font-bold tracking-widest text-teal-400 uppercase bg-teal-500/5 px-2.5 py-1 rounded-full border border-teal-500/10">
-              System Gateway
+          {/* Brand Header */}
+          <div className="relative z-10 flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-teal-500/20">
+              <Sparkles className="w-4 h-4 text-zinc-950 font-bold" />
+            </div>
+            <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+              Vocalize<span className="text-teal-400">AI</span>
             </span>
-            <h2 className="text-3xl font-black tracking-tight leading-tight">
-              Create, Tune, and <br />
-              Deploy Free Voice Bots.
-            </h2>
-            <p className="text-zinc-400 text-xs max-w-sm leading-relaxed">
-              Log in to access your agent manager dashboard, customize system prompts, allocate credit thresholds, and inspect historical call session logs.
-            </p>
           </div>
 
-          {/* Active Audio Waveform Monitor */}
-          <div className="p-4 rounded-xl border border-zinc-900 bg-zinc-900/10 backdrop-blur-md space-y-4 max-w-md">
-            <div className="flex justify-between items-center text-[10px] text-zinc-500 font-bold tracking-wider uppercase">
-              <span className="flex items-center space-x-1.5 text-teal-400">
-                <Activity className="w-3.5 h-3.5" />
-                <span>Demo Wave Visualizer</span>
+          {/* Middle Visuals: Dynamic Audio Line & Features */}
+          <div className="relative z-10 space-y-12 my-auto">
+            <div className="space-y-4">
+              <span className="text-[10px] font-bold tracking-widest text-teal-400 uppercase bg-teal-500/5 px-2.5 py-1 rounded-full border border-teal-500/10">
+                System Gateway
               </span>
-              <span className="font-mono text-zinc-400 bg-zinc-800/20 px-1.5 py-0.5 rounded border border-zinc-850">
-                Demo
-              </span>
+              <h2 className="text-3xl font-black tracking-tight leading-tight">
+                Create, Tune, and <br />
+                Deploy Free Voice Bots.
+              </h2>
+              <p className="text-zinc-400 text-xs max-w-sm leading-relaxed">
+                Log in to access your agent manager dashboard, customize system prompts, allocate credit thresholds, and inspect historical call session logs.
+              </p>
             </div>
-            
-            <div className="h-16 w-full relative flex items-center justify-center bg-zinc-950/40 rounded-lg overflow-hidden border border-zinc-900/60">
-              <canvas ref={leftCanvasRef} className="absolute inset-0 w-full h-full" />
+
+            {/* Active Audio Waveform Monitor */}
+            <div className="p-4 rounded-xl border border-zinc-900 bg-zinc-900/10 backdrop-blur-md space-y-4 max-w-md">
+              <div className="flex justify-between items-center text-[10px] text-zinc-500 font-bold tracking-wider uppercase">
+                <span className="flex items-center space-x-1.5 text-teal-400">
+                  <Activity className="w-3.5 h-3.5" />
+                  <span>Demo Wave Visualizer</span>
+                </span>
+                <span className="font-mono text-zinc-400 bg-zinc-800/20 px-1.5 py-0.5 rounded border border-zinc-850">
+                  Demo
+                </span>
+              </div>
+              
+              <div className="h-16 w-full relative flex items-center justify-center bg-zinc-950/40 rounded-lg overflow-hidden border border-zinc-900/60">
+                <canvas ref={leftCanvasRef} className="absolute inset-0 w-full h-full" />
+              </div>
+            </div>
+
+            {/* Core Badges Row */}
+            <div className="grid grid-cols-2 gap-4 max-w-md">
+              <div className="flex items-start space-x-2.5">
+                <div className="w-7 h-7 rounded-lg bg-teal-500/5 border border-teal-500/15 flex items-center justify-center text-teal-400">
+                  <Cpu className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-200">Local processing</h4>
+                  <p className="text-[10px] text-zinc-500 mt-0.5 leading-normal">Speech engines run inside client browser</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-2.5">
+                <div className="w-7 h-7 rounded-lg bg-purple-500/5 border border-purple-500/15 flex items-center justify-center text-purple-400">
+                  <Zap className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-200">Sub-100ms Latency</h4>
+                  <p className="text-[10px] text-zinc-500 mt-0.5 leading-normal">Zero network wait for audio synthesizers</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Core Badges Row */}
-          <div className="grid grid-cols-2 gap-4 max-w-md">
-            <div className="flex items-start space-x-2.5">
-              <div className="w-7 h-7 rounded-lg bg-teal-500/5 border border-teal-500/15 flex items-center justify-center text-teal-400">
-                <Cpu className="w-4 h-4" />
+          {/* Footer Logs Terminal */}
+          <div className="relative z-10 border border-zinc-900 bg-zinc-950/80 rounded-xl p-3.5 w-full max-w-md font-mono text-[9px] text-zinc-500 space-y-1.5 shadow-2xl">
+            <div className="flex items-center justify-between text-zinc-400 font-bold border-b border-zinc-900 pb-1.5 mb-2">
+              <div className="flex items-center space-x-1.5">
+                <Terminal className="w-3.5 h-3.5 text-teal-400" />
+                <span>Demo Console Sandbox</span>
               </div>
-              <div>
-                <h4 className="text-xs font-bold text-zinc-200">Local processing</h4>
-                <p className="text-[10px] text-zinc-500 mt-0.5 leading-normal">Speech engines run inside client browser</p>
-              </div>
+              <span className="text-[8px] text-zinc-650 uppercase font-semibold">Canned Preview</span>
             </div>
-            <div className="flex items-start space-x-2.5">
-              <div className="w-7 h-7 rounded-lg bg-purple-500/5 border border-purple-500/15 flex items-center justify-center text-purple-400">
-                <Zap className="w-4 h-4" />
+            {simulatedLogs.map((log, idx) => (
+              <div key={idx} className={`truncate ${idx === 0 ? "text-teal-400/90 font-semibold" : ""}`}>
+                {log}
               </div>
-              <div>
-                <h4 className="text-xs font-bold text-zinc-200">Sub-100ms Latency</h4>
-                <p className="text-[10px] text-zinc-500 mt-0.5 leading-normal">Zero network wait for audio synthesizers</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-
-        {/* Footer Logs Terminal */}
-        <div className="relative z-10 border border-zinc-900 bg-zinc-950/80 rounded-xl p-3.5 w-full max-w-md font-mono text-[9px] text-zinc-500 space-y-1.5 shadow-2xl">
-          <div className="flex items-center justify-between text-zinc-400 font-bold border-b border-zinc-900 pb-1.5 mb-2">
-            <div className="flex items-center space-x-1.5">
-              <Terminal className="w-3.5 h-3.5 text-teal-400" />
-              <span>Demo Console Sandbox</span>
-            </div>
-            <span className="text-[8px] text-zinc-650 uppercase font-semibold">Canned Preview</span>
-          </div>
-          {simulatedLogs.map((log, idx) => (
-            <div key={idx} className={`truncate ${idx === 0 ? "text-teal-400/90 font-semibold" : ""}`}>
-              {log}
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* RIGHT PANEL: Authentication handler Form (Centered on mobile) */}
       <div className="flex-1 min-h-screen bg-zinc-950 relative flex flex-col justify-center items-center overflow-y-auto px-4 z-10">
@@ -193,6 +198,13 @@ export default function Handler() {
         <div className="absolute top-6 left-6 z-50">
           <Link
             href="/"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.addEventListener("beforeunload", (e) => {
+                  e.stopImmediatePropagation();
+                }, true);
+              }
+            }}
             className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-zinc-300 hover:text-white hover:bg-zinc-800/80 transition-all font-medium text-xs group shadow-lg shadow-black/20"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
@@ -201,20 +213,29 @@ export default function Handler() {
         </div>
 
         {/* Main Stack Auth Container */}
-        <div className="w-full max-w-md p-8 bg-gradient-to-br from-zinc-900/40 via-zinc-900/20 to-zinc-950/60 border border-zinc-800/60 rounded-2xl backdrop-blur-xl shadow-2xl relative my-12">
+        <div className={`w-full ${isSettings ? "max-w-4xl" : "max-w-md"} p-6 md:p-8 bg-gradient-to-br from-zinc-900/40 via-zinc-900/20 to-zinc-950/60 border border-zinc-800/60 rounded-2xl backdrop-blur-xl shadow-2xl relative my-12 transition-all duration-300`}>
           
           {/* Header area */}
-          <div className="mb-8 flex flex-col items-center space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-teal-500/25 lg:hidden">
-              <Sparkles className="w-4.5 h-4.5 text-zinc-950 font-bold" />
+          {isSettings ? (
+            <div className="mb-6 flex flex-col items-center sm:items-start space-y-2 border-b border-zinc-800/80 pb-4">
+              <h2 className="text-lg font-bold text-white">Account Settings & Profile</h2>
+              <p className="text-zinc-400 text-xs font-semibold tracking-wide">
+                Manage your personal profiles, sessions, and security options
+              </p>
             </div>
-            <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent lg:hidden">
-              Vocalize<span className="text-teal-400">AI</span>
-            </span>
-            <p className="text-zinc-400 text-xs font-semibold tracking-wide text-center">
-              Authenticate via Secure Gateway
-            </p>
-          </div>
+          ) : (
+            <div className="mb-8 flex flex-col items-center space-y-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-teal-500/25 lg:hidden">
+                <Sparkles className="w-4.5 h-4.5 text-zinc-950 font-bold" />
+              </div>
+              <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent lg:hidden">
+                Vocalize<span className="text-teal-400">AI</span>
+              </span>
+              <p className="text-zinc-400 text-xs font-semibold tracking-wide text-center">
+                Authenticate via Secure Gateway
+              </p>
+            </div>
+          )}
 
           {/* Form wrapper */}
           <div className="stack-auth-form-wrapper">

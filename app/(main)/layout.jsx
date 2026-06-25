@@ -29,7 +29,7 @@ function DashboardLayout({ children }) {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-teal-500/30 selection:text-teal-200">
+    <div className="h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-teal-500/30 selection:text-teal-200 overflow-hidden">
       {/* Top Navbar */}
       <AppHeader onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
 
